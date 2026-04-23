@@ -6,18 +6,21 @@
  * interception behavior. Uses Naive UI NSwitch (identical component
  * to the desktop Basic.vue), NInputNumber, and NDivider.
  */
-import { NFormItem, NSwitch, NInputNumber, NDivider } from 'naive-ui';
+import { NFormItem, NSwitch, NInputNumber, NDivider, NSelect } from 'naive-ui';
+import type { DownloadTarget } from '@/shared/types';
 
 defineProps<{
   enabled: boolean;
   minFileSize: number;
   autoLaunchApp: boolean;
+  target: DownloadTarget;
 }>();
 
 const emit = defineEmits<{
   'update:enabled': [value: boolean];
   'update:minFileSize': [value: number];
   'update:autoLaunchApp': [value: boolean];
+  'update:target': [value: DownloadTarget];
 }>();
 
 import { useI18n } from '@/shared/i18n/engine';
@@ -58,6 +61,26 @@ const { t: i18n } = useI18n();
     </NFormItem>
 
     <NDivider />
+
+    <NFormItem :label="i18n('options_download_target_label', 'Download Target')">
+      <template #label>
+        <div class="label-group">
+          <span>{{ i18n('options_download_target_label', 'Download Target') }}</span>
+          <span class="label-hint">{{
+            i18n('options_download_target_desc', 'Choose where to send downloads')
+          }}</span>
+        </div>
+      </template>
+      <NSelect
+        :value="target"
+        :options="[
+          { label: i18n('options_target_motrix', 'Motrix Next'), value: 'motrix' },
+          { label: i18n('options_target_aria2', 'Aria2 RPC'), value: 'aria2' },
+        ]"
+        style="width: 180px"
+        @update:value="emit('update:target', $event)"
+      />
+    </NFormItem>
 
     <NFormItem :label="i18n('options_auto_launch_label', 'Auto-launch Motrix Next')">
       <template #label>

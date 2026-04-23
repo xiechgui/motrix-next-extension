@@ -1,15 +1,16 @@
-import type { DownloadSettings, SiteRule, FilterContext } from '@/shared/types';
+import type { DownloadSettings, SiteRule, FilterContext, Aria2Config } from '@/shared/types';
 import type { DiagnosticInput } from '@/lib/storage/diagnostic-log';
 import { evaluateFilterPipeline, createFilterPipeline } from './filter';
 import { extractFilenameFromUrl } from '@/shared/url';
 import type { DesktopApiClient } from '@/lib/api/desktop-client';
+import type { Aria2Client } from '@/lib/api/aria2-client';
 
 // ─── Dependency Interface ───────────────────────────────
 
 /**
  * Minimal dependency interface for the download orchestrator.
  *
- * Primary path: HTTP API via `desktopClient.addDownload()`.
+ * Primary path: HTTP API via `desktopClient.addDownload()` or `aria2Client.addUri()`.
  * Fallback path: `openProtocolNewTask()` deep-link when the desktop app
  * is not reachable via HTTP (e.g. app not yet started).
  */
@@ -33,6 +34,15 @@ export interface OrchestratorDeps {
    * When available and reachable, this is the primary download submission path.
    */
   desktopClient?: DesktopApiClient;
+  /**
+   * Aria2 RPC client for direct communication with Aria2 daemon.
+   * Alternative download target when user selects Aria2 as target.
+   */
+  aria2Client?: Aria2Client;
+  /**
+   * Aria2 configuration getter.
+   */
+  getAria2Config?: () => Aria2Config;
   /**
    * Wake the desktop app via protocol handler and wait for the HTTP API
    * to become reachable. Returns true if the app woke up successfully.
@@ -178,7 +188,7 @@ export class DownloadOrchestrator {
   // ─── Private Helpers ──────────────────────────────
 
   /**
-   * Try HTTP API first, then fall back to deep-link protocol.
+   * Try HTTP API first (Motrix or Aria2), then fall back to deep-link protocol.
    * @returns `true` if successfully routed, `false` if all paths failed.
    */
   private async sendToDesktop(
@@ -187,7 +197,42 @@ export class DownloadOrchestrator {
     cookie: string,
     displayName: string,
   ): Promise<boolean> {
-    // Primary: HTTP API
+    const settings = this.deps.getSettings();
+    const target = settings.target ?? 'motrix';
+
+    // Primary: Aria2 RPC (if selected as target)
+    if (target === 'aria2' && this.deps.aria2Client && this.deps.getAria2Config) {
+      const aria2Config = this.deps.getAria2Config();
+      if (aria2Config.enabled) {
+        try {
+          const response = await this.deps.aria2Client.addUri({
+            url,
+            referer: referer || undefined,
+            cookie: cookie || undefined,
+            filename: displayName || undefined,
+            dir: aria2Config.downloadDir || undefined,
+          });
+
+          this.deps.diagnosticLog.append({
+            level: 'info',
+            code: 'aria2_download_added',
+            message: `Routed via Aria2 RPC: ${displayName} (gid: ${response.gid})`,
+            context: { url, gid: response.gid, hasCookie: cookie.length > 0 },
+          });
+          return true;
+        } catch (e) {
+          this.deps.diagnosticLog.append({
+            level: 'warn',
+            code: 'aria2_unreachable',
+            message: `Aria2 RPC failed: ${e instanceof Error ? e.message : String(e)}`,
+            context: { url },
+          });
+          // Fall through to Motrix path
+        }
+      }
+    }
+
+    // Primary: Motrix HTTP API
     if (this.deps.desktopClient) {
       try {
         const response = await this.deps.desktopClient.addDownload({
@@ -214,7 +259,6 @@ export class DownloadOrchestrator {
         });
 
         // Wake → retry: try to start the desktop app and retry via HTTP
-        const settings = this.deps.getSettings();
         if (settings.autoLaunchApp && this.deps.wakeDesktop && this.deps.desktopClient) {
           this.deps.diagnosticLog.append({
             level: 'info',

@@ -1,4 +1,4 @@
-import type { DownloadSettings, ConnectionConfig, UiPrefs } from './types';
+import type { DownloadSettings, ConnectionConfig, UiPrefs, Aria2Config } from './types';
 
 export const DEFAULT_CONNECTION_CONFIG: Readonly<ConnectionConfig> = {
   port: 16801,
@@ -10,6 +10,16 @@ export const DEFAULT_DOWNLOAD_SETTINGS: Readonly<DownloadSettings> = {
   minFileSize: 0,
   hideDownloadBar: false,
   autoLaunchApp: true,
+  target: 'motrix',
+} as const;
+
+export const DEFAULT_ARIA2_CONFIG: Readonly<Aria2Config> = {
+  enabled: false,
+  host: '127.0.0.1',
+  port: 6800,
+  secret: '',
+  secure: false,
+  downloadDir: '',
 } as const;
 
 export const DEFAULT_UI_PREFS: Readonly<UiPrefs> = {

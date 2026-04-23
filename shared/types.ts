@@ -50,6 +50,26 @@ export interface ConnectionConfig {
   secret: string;
 }
 
+// ─── Aria2 RPC Config Types ─────────────────────────────
+
+export interface Aria2Config {
+  /** Enable Aria2 RPC download */
+  enabled: boolean;
+  /** Aria2 RPC host (default: 127.0.0.1) */
+  host: string;
+  /** Aria2 RPC port (default: 6800) */
+  port: number;
+  /** Aria2 RPC secret token */
+  secret: string;
+  /** Use HTTPS instead of HTTP */
+  secure: boolean;
+  /** Download path on Aria2 server */
+  downloadDir: string;
+}
+
+/** Download target type */
+export type DownloadTarget = 'motrix' | 'aria2';
+
 // ─── Download Filter Types ──────────────────────────────
 
 export interface FilterContext {
@@ -76,6 +96,8 @@ export interface DownloadSettings {
   minFileSize: number; // MB, 0 = no limit
   hideDownloadBar: boolean;
   autoLaunchApp: boolean;
+  /** Default download target: 'motrix' | 'aria2' */
+  target: DownloadTarget;
 }
 
 export interface SiteRule {
@@ -97,6 +119,11 @@ export type DiagnosticCode =
   | 'api_connected'
   | 'api_unreachable'
   | 'api_auth_failed'
+  // ── Aria2 RPC connectivity ────────────────────────────
+  | 'aria2_connected'
+  | 'aria2_unreachable'
+  | 'aria2_auth_failed'
+  | 'aria2_download_added'
   // ── Download interception lifecycle ───────────────────
   | 'download_intercepted'
   | 'download_skipped'

@@ -1,5 +1,5 @@
 import { DownloadOrchestrator } from '@/lib/download';
-import { DesktopApiClient } from '@/lib/api';
+import { DesktopApiClient, Aria2Client } from '@/lib/api';
 import {
   DownloadBarService,
   ContextMenuService,
@@ -11,11 +11,12 @@ import {
   StorageService,
   parseDownloadSettings,
   parseSiteRules,
+  parseAria2Config,
 } from '@/lib/storage';
 import { buildProtocolUrl, ProtocolAction } from '@/lib/protocol';
 import { decodeThunderLink } from '@/shared/thunder';
-import { DEFAULT_DOWNLOAD_SETTINGS } from '@/shared/constants';
-import type { DownloadSettings, SiteRule, DiagnosticCode } from '@/shared/types';
+import { DEFAULT_DOWNLOAD_SETTINGS, DEFAULT_ARIA2_CONFIG } from '@/shared/constants';
+import type { DownloadSettings, SiteRule, Aria2Config, DiagnosticCode } from '@/shared/types';
 import type { DiagnosticInput } from '@/lib/storage/diagnostic-log';
 import { I18nEngine } from '@/shared/i18n/engine';
 import { resolveLocaleId, FALLBACK_LOCALE } from '@/shared/i18n/dictionaries';
@@ -23,6 +24,7 @@ import { resolveLocaleId, FALLBACK_LOCALE } from '@/shared/i18n/dictionaries';
 export default defineBackground(() => {
   // ─── State (restored from storage on each wake) ───
   let settings: DownloadSettings = { ...DEFAULT_DOWNLOAD_SETTINGS };
+  let aria2Config: Aria2Config = { ...DEFAULT_ARIA2_CONFIG };
   let siteRules: SiteRule[] = [];
 
   const bgI18n = new I18nEngine(FALLBACK_LOCALE);
@@ -75,6 +77,7 @@ export default defineBackground(() => {
 
   // ─── Desktop API client ───────────────────────
   const desktopClient = new DesktopApiClient({ port: 16801, secret: '' });
+  const aria2Client = new Aria2Client({ host: '127.0.0.1', port: 6800, secret: '', secure: false });
   const wakeService = new WakeService();
 
   // ─── Load config from storage on startup ──────────
@@ -82,6 +85,7 @@ export default defineBackground(() => {
     try {
       const { storage: data, migration } = await storageService.load();
       settings = data.settings;
+      aria2Config = data.aria2;
       siteRules = data.siteRules;
       diagnosticLog.hydrate(data.diagnosticLog);
 
@@ -89,6 +93,14 @@ export default defineBackground(() => {
       desktopClient.updateConfig({
         port: data.connection.port,
         secret: data.connection.secret,
+      });
+
+      // Sync Aria2 RPC client config
+      aria2Client.updateConfig({
+        host: aria2Config.host,
+        port: aria2Config.port,
+        secret: aria2Config.secret,
+        secure: aria2Config.secure,
       });
 
       // Hydrate i18n locale
@@ -174,6 +186,8 @@ export default defineBackground(() => {
     getSiteRules: () => siteRules,
     getTabUrl,
     desktopClient,
+    aria2Client,
+    getAria2Config: () => aria2Config,
     wakeDesktop: async () =>
       wakeService.wakeAndWaitForApi({
         checkApi: () => desktopClient.isReachable(),
@@ -414,6 +428,15 @@ export default defineBackground(() => {
       desktopClient.updateConfig({
         port: conn.port ?? 16801,
         secret: conn.secret ?? '',
+      });
+    }
+    if (changes.aria2?.newValue) {
+      aria2Config = parseAria2Config(changes.aria2.newValue);
+      aria2Client.updateConfig({
+        host: aria2Config.host,
+        port: aria2Config.port,
+        secret: aria2Config.secret,
+        secure: aria2Config.secure,
       });
     }
     if (changes.settings?.newValue) {

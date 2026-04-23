@@ -15,7 +15,7 @@
 // ─── Version ────────────────────────────────────────────
 
 /** Current storage schema version. Bump this and add a migration entry. */
-export const STORAGE_VERSION = 2;
+export const STORAGE_VERSION = 3;
 
 // ─── Migration Definitions ─────────────────────────────
 
@@ -54,6 +54,35 @@ const MIGRATIONS: readonly Migration[] = [
         return { ...data, settings: s, _version: 2 };
       }
       return { ...data, _version: 2 };
+    },
+  },
+  {
+    // v2 → v3: Add Aria2 RPC support.
+    // Adds aria2 config object and target field to settings for selecting
+    // between Motrix and Aria2 as download destination.
+    version: 3,
+    up: (data) => {
+      const newData = { ...data, _version: 3 };
+      // Initialize aria2 config with defaults if not present
+      if (!newData.aria2) {
+        newData.aria2 = {
+          enabled: false,
+          host: '127.0.0.1',
+          port: 6800,
+          secret: '',
+          secure: false,
+          downloadDir: '',
+        };
+      }
+      // Add target field to settings if not present
+      if (newData.settings && typeof newData.settings === 'object') {
+        const s = { ...(newData.settings as Record<string, unknown>) };
+        if (!s.target) {
+          s.target = 'motrix';
+        }
+        newData.settings = s;
+      }
+      return newData;
     },
   },
 ];

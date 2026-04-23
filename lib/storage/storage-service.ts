@@ -16,6 +16,7 @@ import { migrateStorage, type MigrationStorageApi, type MigrationResult } from '
 import type {
   ConnectionConfig,
   DownloadSettings,
+  Aria2Config,
   SiteRule,
   UiPrefs,
   DiagnosticEvent,
@@ -61,6 +62,11 @@ export class StorageService {
   /** Persist download behavior settings. */
   async saveSettings(settings: DownloadSettings): Promise<void> {
     await this.api.set({ settings });
+  }
+
+  /** Persist Aria2 RPC configuration. */
+  async saveAria2Config(config: Aria2Config): Promise<void> {
+    await this.api.set({ aria2: config });
   }
 
   /** Persist site rules array. */

@@ -22,6 +22,7 @@ import {
   DEFAULT_CONNECTION_CONFIG,
   DEFAULT_DOWNLOAD_SETTINGS,
   DEFAULT_UI_PREFS,
+  DEFAULT_ARIA2_CONFIG,
 } from '@/shared/constants';
 
 // ─── Leaf Schemas ───────────────────────────────────────
@@ -39,6 +40,18 @@ const DownloadSettingsSchema = z
     minFileSize: z.number().min(0).default(DEFAULT_DOWNLOAD_SETTINGS.minFileSize),
     hideDownloadBar: z.boolean().default(DEFAULT_DOWNLOAD_SETTINGS.hideDownloadBar),
     autoLaunchApp: z.boolean().default(DEFAULT_DOWNLOAD_SETTINGS.autoLaunchApp),
+    target: z.enum(['motrix', 'aria2']).default(DEFAULT_DOWNLOAD_SETTINGS.target),
+  })
+  .strict();
+
+const Aria2ConfigSchema = z
+  .object({
+    enabled: z.boolean().default(DEFAULT_ARIA2_CONFIG.enabled),
+    host: z.string().default(DEFAULT_ARIA2_CONFIG.host),
+    port: z.number().int().min(1).max(65535).default(DEFAULT_ARIA2_CONFIG.port),
+    secret: z.string().default(DEFAULT_ARIA2_CONFIG.secret),
+    secure: z.boolean().default(DEFAULT_ARIA2_CONFIG.secure),
+    downloadDir: z.string().default(DEFAULT_ARIA2_CONFIG.downloadDir),
   })
   .strict();
 
@@ -65,6 +78,11 @@ const DiagnosticCodeSchema = z.enum([
   'api_connected',
   'api_unreachable',
   'api_auth_failed',
+  // Aria2 RPC connectivity
+  'aria2_connected',
+  'aria2_unreachable',
+  'aria2_auth_failed',
+  'aria2_download_added',
   // Download interception lifecycle
   'download_intercepted',
   'download_skipped',
@@ -119,6 +137,7 @@ const DiagnosticEventSchema = z.object({
 export interface ParsedStorage {
   connection: z.infer<typeof ConnectionConfigSchema>;
   settings: z.infer<typeof DownloadSettingsSchema>;
+  aria2: z.infer<typeof Aria2ConfigSchema>;
   siteRules: z.infer<typeof SiteRuleSchema>[];
   uiPrefs: z.infer<typeof UiPrefsSchema>;
   diagnosticLog: z.infer<typeof DiagnosticEventSchema>[];
@@ -155,6 +174,19 @@ export function parseDownloadSettings(input: unknown): ParsedStorage['settings']
   const result = DownloadSettingsSchema.safeParse(input);
   if (result.success) return result.data;
   return DownloadSettingsSchema.parse({});
+}
+
+/**
+ * Parse and validate an Aria2Config object.
+ * Missing or invalid fields are replaced with defaults.
+ */
+export function parseAria2Config(input: unknown): ParsedStorage['aria2'] {
+  if (input == null || typeof input !== 'object') {
+    return Aria2ConfigSchema.parse({});
+  }
+  const result = Aria2ConfigSchema.safeParse(input);
+  if (result.success) return result.data;
+  return Aria2ConfigSchema.parse({});
 }
 
 /**
@@ -204,6 +236,7 @@ export function parseStorage(input: unknown): ParsedStorage {
   return {
     connection: parseConnectionConfig(raw.connection),
     settings: parseDownloadSettings(raw.settings),
+    aria2: parseAria2Config(raw.aria2),
     siteRules: parseSiteRules(raw.siteRules),
     uiPrefs: parseUiPrefs(raw.uiPrefs),
     diagnosticLog: parseDiagnosticEvents(raw.diagnosticLog),

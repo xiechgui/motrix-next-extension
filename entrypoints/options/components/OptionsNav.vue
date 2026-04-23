@@ -14,6 +14,7 @@ import {
   ColorPaletteOutline,
   GlobeOutline,
   BugOutline,
+  CloudDownloadOutline,
 } from '@vicons/ionicons5';
 import { useI18n } from '@/shared/i18n/engine';
 
@@ -41,6 +42,11 @@ const sections = [
     id: 'behavior',
     icon: SettingsOutline,
     label: () => t('options_section_behavior', 'Behavior'),
+  },
+  {
+    id: 'aria2',
+    icon: CloudDownloadOutline,
+    label: () => t('options_section_aria2', 'Aria2 RPC'),
   },
   { id: 'rules', icon: ListOutline, label: () => t('options_section_rules', 'Site Rules') },
   {

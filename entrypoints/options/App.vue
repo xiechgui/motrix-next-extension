@@ -16,11 +16,12 @@
 import { ref, provide, onMounted, onUnmounted, computed, watch } from 'vue';
 import { NConfigProvider, createDiscreteApi } from 'naive-ui';
 import { StorageService } from '@/lib/storage';
-import type { ConnectionConfig } from '@/shared/types';
+import type { ConnectionConfig, Aria2Config, DownloadTarget } from '@/shared/types';
 import {
   DEFAULT_CONNECTION_CONFIG,
   DEFAULT_DOWNLOAD_SETTINGS,
   DEFAULT_UI_PREFS,
+  DEFAULT_ARIA2_CONFIG,
 } from '@/shared/constants';
 import { useTheme } from '@/shared/use-theme';
 import { usePreferenceForm } from '@/shared/use-preference-form';
@@ -29,6 +30,7 @@ import { useSiteRules } from './composables/use-site-rules';
 import { useConnectionTest } from './composables/use-connection-test';
 import { useDiagnostics } from './composables/use-diagnostics';
 import { useAppearance } from './composables/use-appearance';
+import { useAria2 } from './composables/use-aria2';
 import { createI18n, I18N_KEY, useNaiveLocale } from '@/shared/i18n/engine';
 
 import OptionsNav from './components/OptionsNav.vue';
@@ -39,6 +41,7 @@ import AppearanceSection from './components/AppearanceSection.vue';
 import DiagnosticsSection from './components/DiagnosticsSection.vue';
 import SettingsActionBar from './components/SettingsActionBar.vue';
 import LanguageSection from './components/LanguageSection.vue';
+import Aria2Section from './components/Aria2Section.vue';
 
 // ─── Theme + Color Scheme ───────────────────────────────────────────
 
@@ -89,6 +92,7 @@ interface SettingsForm {
   minFileSize: number;
   hideDownloadBar: boolean;
   autoLaunchApp: boolean;
+  target: DownloadTarget;
 }
 
 function buildForm(): SettingsForm {
@@ -99,6 +103,7 @@ function buildForm(): SettingsForm {
     minFileSize: DEFAULT_DOWNLOAD_SETTINGS.minFileSize,
     hideDownloadBar: DEFAULT_DOWNLOAD_SETTINGS.hideDownloadBar,
     autoLaunchApp: DEFAULT_DOWNLOAD_SETTINGS.autoLaunchApp,
+    target: DEFAULT_DOWNLOAD_SETTINGS.target,
   };
 }
 
@@ -122,6 +127,7 @@ const {
       minFileSize: f.minFileSize,
       hideDownloadBar: f.hideDownloadBar,
       autoLaunchApp: f.autoLaunchApp,
+      target: f.target,
     });
   },
   afterSave: () => {
@@ -152,6 +158,15 @@ const connectionForTest = computed<ConnectionConfig>(() => ({
 const { connectionStatus, connectionVersion, connectionError, testingConnection, testConnection } =
   useConnectionTest(connectionForTest);
 
+// ─── Aria2 Settings ────────────────────────────────────────────────
+
+const aria2 = useAria2({
+  initialConfig: DEFAULT_ARIA2_CONFIG,
+  onSave: async (config: Aria2Config) => {
+    await storageService.saveAria2Config(config);
+  },
+});
+
 // ─── Extension Version ─────────────────────────────────────────────
 
 const extensionVersion = chrome.runtime.getManifest().version;
@@ -168,7 +183,16 @@ async function loadFromStorage(): Promise<void> {
   form.value.minFileSize = data.settings.minFileSize;
   form.value.hideDownloadBar = data.settings.hideDownloadBar;
   form.value.autoLaunchApp = data.settings.autoLaunchApp;
+  form.value.target = data.settings.target ?? 'motrix';
   resetSnapshot();
+
+  // Hydrate Aria2 config
+  aria2.enabled.value = data.aria2.enabled;
+  aria2.host.value = data.aria2.host;
+  aria2.port.value = data.aria2.port;
+  aria2.secret.value = data.aria2.secret;
+  aria2.secure.value = data.aria2.secure;
+  aria2.downloadDir.value = data.aria2.downloadDir;
 
   // Hydrate composables (already type-safe from Zod)
   appearance.hydrate(data.uiPrefs);
@@ -290,11 +314,44 @@ onUnmounted(() => {
                   :enabled="form.enabled"
                   :min-file-size="form.minFileSize"
                   :auto-launch-app="form.autoLaunchApp"
+                  :target="form.target"
                   @update:enabled="form.enabled = $event"
                   @update:min-file-size="form.minFileSize = $event"
                   @update:auto-launch-app="form.autoLaunchApp = $event"
+                  @update:target="form.target = $event"
                 />
                 <SettingsActionBar :is-dirty="isDirty" @save="handleSave" @discard="handleReset" />
+              </div>
+            </div>
+
+            <!-- Aria2 -->
+            <div v-else-if="activeSection === 'aria2'" key="aria2" class="section-wrapper">
+              <h2 class="section-title">{{ i18n('options_section_aria2', 'Aria2 RPC') }}</h2>
+              <div class="card">
+                <Aria2Section
+                  :enabled="aria2.enabled.value"
+                  :host="aria2.host.value"
+                  :port="aria2.port.value"
+                  :secret="aria2.secret.value"
+                  :secure="aria2.secure.value"
+                  :download-dir="aria2.downloadDir.value"
+                  :testing="aria2.testing.value"
+                  :connected="aria2.connected.value"
+                  :version="aria2.version.value"
+                  :error="aria2.error.value"
+                  @update:enabled="aria2.enabled.value = $event"
+                  @update:host="aria2.host.value = $event"
+                  @update:port="aria2.port.value = $event"
+                  @update:secret="aria2.secret.value = $event"
+                  @update:secure="aria2.secure.value = $event"
+                  @update:download-dir="aria2.downloadDir.value = $event"
+                  @test="aria2.testConnection"
+                />
+                <SettingsActionBar
+                  :is-dirty="aria2.hasChanges.value"
+                  @save="aria2.save()"
+                  @discard="aria2.reset"
+                />
               </div>
             </div>
 
