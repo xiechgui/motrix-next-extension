@@ -67,6 +67,7 @@ describe('parseDownloadSettings', () => {
       minFileSize: 10,
       hideDownloadBar: true,
       autoLaunchApp: false,
+      target: 'motrix',
     };
     const result = parseDownloadSettings(input);
     expect(result).toEqual(input);
@@ -79,6 +80,7 @@ describe('parseDownloadSettings', () => {
       minFileSize: 0,
       hideDownloadBar: false,
       autoLaunchApp: true,
+      target: 'motrix',
     });
   });
 
@@ -89,6 +91,7 @@ describe('parseDownloadSettings', () => {
       minFileSize: 0,
       hideDownloadBar: false,
       autoLaunchApp: true,
+      target: 'motrix',
     });
   });
 

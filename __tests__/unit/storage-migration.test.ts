@@ -51,7 +51,7 @@ describe('migrateStorage', () => {
       unknown
     >;
     expect(setCall.connection).toEqual({ port: 9000, secret: 'test' });
-    expect(setCall.settings).toEqual({ enabled: false });
+    expect(setCall.settings).toEqual({ enabled: false, target: 'motrix' });
   });
 
   it('handles empty storage gracefully', async () => {

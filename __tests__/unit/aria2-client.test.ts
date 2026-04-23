@@ -99,7 +99,7 @@ describe('Aria2Client', () => {
           }),
       });
 
-      await expect(client.getVersion()).rejects.toThrow('Aria2 RPC error: Unauthorized');
+      await expect(client.getVersion()).rejects.toThrow('RPC error 1: Unauthorized');
     });
 
     it('throws error on network failure', async () => {
@@ -231,7 +231,7 @@ describe('Aria2Client', () => {
       });
 
       await expect(client.addUri({ url: 'https://example.com/file.zip' })).rejects.toThrow(
-        'Aria2 RPC error: Invalid parameter',
+        'RPC error 2: Invalid parameter',
       );
     });
   });
@@ -248,9 +248,13 @@ describe('Aria2Client', () => {
       await client.getVersion();
 
       const calls = mockFetch.mock.calls;
-      expect(JSON.parse((calls[0]![1] as { body: string }).body).id).toBe(1);
-      expect(JSON.parse((calls[1]![1] as { body: string }).body).id).toBe(2);
-      expect(JSON.parse((calls[2]![1] as { body: string }).body).id).toBe(3);
+      // ID is a string in format "aria2-{counter}-{timestamp}"
+      const id0 = JSON.parse((calls[0]![1] as { body: string }).body).id as string;
+      const id1 = JSON.parse((calls[1]![1] as { body: string }).body).id as string;
+      const id2 = JSON.parse((calls[2]![1] as { body: string }).body).id as string;
+      expect(id0.startsWith('aria2-1-')).toBe(true);
+      expect(id1.startsWith('aria2-2-')).toBe(true);
+      expect(id2.startsWith('aria2-3-')).toBe(true);
     });
   });
 });

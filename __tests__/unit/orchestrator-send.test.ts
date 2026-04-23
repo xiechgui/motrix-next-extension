@@ -160,9 +160,9 @@ describe('DownloadOrchestrator.sendUrl', () => {
     expect(mockAria2Client.addUri).toHaveBeenCalledWith({
       url: 'https://example.com/file.zip',
       referer: 'https://example.com',
-      cookie: '',
-      filename: undefined,
-      dir: '',
+      cookie: undefined,
+      filename: 'file.zip',
+      dir: undefined,
     });
     expect(deps.openProtocolNewTask).not.toHaveBeenCalled();
     expect(result).toBe('routed-to-desktop');

@@ -17,6 +17,7 @@ export interface Aria2Config {
   port: number;
   secret: string;
   secure: boolean;
+  downloadDir: string;
 }
 
 export interface Aria2DownloadRequest {
@@ -185,8 +186,10 @@ export class Aria2Client {
   async addUri(request: Aria2DownloadRequest): Promise<Aria2DownloadResponse> {
     const options: Record<string, string | string[]> = {};
 
-    if (request.dir) {
-      options.dir = request.dir;
+    // Use request dir first, then fall back to config downloadDir
+    const downloadDir = request.dir || this.config.downloadDir;
+    if (downloadDir) {
+      options.dir = downloadDir;
     }
     if (request.filename) {
       options.out = request.filename;
