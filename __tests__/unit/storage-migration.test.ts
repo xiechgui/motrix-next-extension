@@ -152,4 +152,94 @@ describe('migrateStorage', () => {
     expect(setCall.connection).toEqual({ port: 9000, secret: '' });
     expect(setCall._version).toBe(STORAGE_VERSION);
   });
+
+  // ─── v3 Migration: Add Aria2 Support ───────────────────
+
+  it('v3 migration adds aria2 config with defaults', async () => {
+    const api = createMockStorage({
+      _version: 2,
+      settings: { enabled: true },
+    });
+
+    await migrateStorage(api);
+
+    const setCall = (api.set as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as Record<
+      string,
+      unknown
+    >;
+    expect(setCall.aria2).toEqual({
+      enabled: false,
+      host: '127.0.0.1',
+      port: 6800,
+      secret: '',
+      secure: false,
+      downloadDir: '',
+    });
+    expect(setCall._version).toBe(STORAGE_VERSION);
+  });
+
+  it('v3 migration adds target field to settings', async () => {
+    const api = createMockStorage({
+      _version: 2,
+      settings: { enabled: true, minFileSize: 10 },
+    });
+
+    await migrateStorage(api);
+
+    const setCall = (api.set as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as Record<
+      string,
+      unknown
+    >;
+    const migratedSettings = setCall.settings as Record<string, unknown>;
+    expect(migratedSettings.target).toBe('motrix');
+    expect(migratedSettings.enabled).toBe(true);
+    expect(migratedSettings.minFileSize).toBe(10);
+  });
+
+  it('v3 migration preserves existing aria2 config', async () => {
+    const api = createMockStorage({
+      _version: 2,
+      aria2: {
+        enabled: true,
+        host: '192.168.1.100',
+        port: 6800,
+        secret: 'secret',
+        secure: true,
+        downloadDir: '/downloads',
+      },
+    });
+
+    await migrateStorage(api);
+
+    const setCall = (api.set as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as Record<
+      string,
+      unknown
+    >;
+    expect(setCall.aria2).toEqual({
+      enabled: true,
+      host: '192.168.1.100',
+      port: 6800,
+      secret: 'secret',
+      secure: true,
+      downloadDir: '/downloads',
+    });
+  });
+
+  it('v3 migration is idempotent', async () => {
+    const api = createMockStorage({
+      _version: 2,
+      settings: { enabled: true, target: 'aria2' },
+      aria2: { enabled: true, host: '127.0.0.1', port: 6800, secret: '', secure: false, downloadDir: '' },
+    });
+
+    await migrateStorage(api);
+
+    const setCall = (api.set as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as Record<
+      string,
+      unknown
+    >;
+    const migratedSettings = setCall.settings as Record<string, unknown>;
+    expect(migratedSettings.target).toBe('aria2');
+    expect(setCall._version).toBe(STORAGE_VERSION);
+  });
 });
