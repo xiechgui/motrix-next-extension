@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { DownloadOrchestrator } from '@/lib/download/orchestrator';
 import type { OrchestratorDeps } from '@/lib/download/orchestrator';
-import type { SiteRule, Aria2Config } from '@/shared/types';
+import type { SiteRule } from '@/shared/types';
 import { DEFAULT_DOWNLOAD_SETTINGS, DEFAULT_ARIA2_CONFIG } from '@/shared/constants';
 import type { Aria2Client } from '@/lib/api/aria2-client';
 

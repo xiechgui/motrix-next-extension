@@ -80,7 +80,8 @@ describe('Aria2Client', () => {
       await client.getVersion();
 
       const callArgs = mockFetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
+      if (!callArgs) throw new Error('No fetch call recorded');
+      const body = JSON.parse((callArgs[1] as { body: string }).body);
       expect(body.params).toContain('token:my-secret-token');
     });
 
@@ -122,7 +123,8 @@ describe('Aria2Client', () => {
 
       expect(result.gid).toBe('gid-123');
       const callArgs = mockFetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
+      if (!callArgs) throw new Error('No fetch call recorded');
+      const body = JSON.parse((callArgs[1] as { body: string }).body);
       expect(body.method).toBe('aria2.addUri');
       expect(body.params[0]).toEqual(['https://example.com/file.zip']);
     });
@@ -144,7 +146,8 @@ describe('Aria2Client', () => {
       });
 
       const callArgs = mockFetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
+      if (!callArgs) throw new Error('No fetch call recorded');
+      const body = JSON.parse((callArgs[1] as { body: string }).body);
       const options = body.params[1];
 
       expect(options.out).toBe('renamed.zip');
@@ -164,7 +167,8 @@ describe('Aria2Client', () => {
       await client.addUri({ url: 'https://example.com/file.zip' });
 
       const callArgs = mockFetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
+      if (!callArgs) throw new Error('No fetch call recorded');
+      const body = JSON.parse((callArgs[1] as { body: string }).body);
       const options = body.params[1];
 
       expect(options.dir).toBe('/default/downloads');
@@ -182,7 +186,8 @@ describe('Aria2Client', () => {
       });
 
       const callArgs = mockFetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
+      if (!callArgs) throw new Error('No fetch call recorded');
+      const body = JSON.parse((callArgs[1] as { body: string }).body);
       const options = body.params[1];
 
       expect(options.dir).toBe('/custom');
@@ -202,7 +207,8 @@ describe('Aria2Client', () => {
       });
 
       const callArgs = mockFetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
+      if (!callArgs) throw new Error('No fetch call recorded');
+      const body = JSON.parse((callArgs[1] as { body: string }).body);
       const options = body.params[1];
 
       expect(options).not.toHaveProperty('out');
@@ -242,9 +248,9 @@ describe('Aria2Client', () => {
       await client.getVersion();
 
       const calls = mockFetch.mock.calls;
-      expect(JSON.parse(calls[0][1].body).id).toBe(1);
-      expect(JSON.parse(calls[1][1].body).id).toBe(2);
-      expect(JSON.parse(calls[2][1].body).id).toBe(3);
+      expect(JSON.parse((calls[0]![1] as { body: string }).body).id).toBe(1);
+      expect(JSON.parse((calls[1]![1] as { body: string }).body).id).toBe(2);
+      expect(JSON.parse((calls[2]![1] as { body: string }).body).id).toBe(3);
     });
   });
 });

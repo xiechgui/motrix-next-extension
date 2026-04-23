@@ -6,6 +6,7 @@ export {
   parseStorage,
   parseConnectionConfig,
   parseDownloadSettings,
+  parseAria2Config,
   parseSiteRules,
   parseUiPrefs,
   parseDiagnosticEvents,

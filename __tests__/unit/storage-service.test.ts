@@ -103,6 +103,7 @@ describe('StorageService.saveSettings', () => {
       minFileSize: 10,
       hideDownloadBar: true,
       autoLaunchApp: false,
+      target: 'motrix' as const,
     };
 
     await service.saveSettings(settings);

@@ -8,7 +8,7 @@
  * - `POST /jsonrpc` — JSON-RPC 2.0 endpoint for all operations
  */
 
-import { API_TIMEOUT_MS, API_MAX_RETRIES } from '@/shared/constants';
+import { API_TIMEOUT_MS } from '@/shared/constants';
 
 // ── Types ────────────────────────────────────────────────────
 
