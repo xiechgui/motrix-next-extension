@@ -77,7 +77,7 @@ export default defineBackground(() => {
 
   // ─── Desktop API client ───────────────────────
   const desktopClient = new DesktopApiClient({ port: 16801, secret: '' });
-  const aria2Client = new Aria2Client({ host: '127.0.0.1', port: 6800, secret: '', secure: false });
+  const aria2Client = new Aria2Client({ host: '127.0.0.1', port: 6800, secret: '', secure: false, downloadDir: '' });
   const wakeService = new WakeService();
 
   // ─── Load config from storage on startup ──────────
@@ -101,6 +101,7 @@ export default defineBackground(() => {
         port: aria2Config.port,
         secret: aria2Config.secret,
         secure: aria2Config.secure,
+        downloadDir: aria2Config.downloadDir,
       });
 
       // Hydrate i18n locale
@@ -437,6 +438,7 @@ export default defineBackground(() => {
         port: aria2Config.port,
         secret: aria2Config.secret,
         secure: aria2Config.secure,
+        downloadDir: aria2Config.downloadDir,
       });
     }
     if (changes.settings?.newValue) {

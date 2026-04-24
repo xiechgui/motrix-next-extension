@@ -69,6 +69,7 @@ export function useAria2(options: UseAria2Options) {
         port: port.value,
         secret: secret.value,
         secure: secure.value,
+        downloadDir: downloadDir.value,
       });
 
       const versionInfo = await client.getVersion();
