@@ -180,11 +180,7 @@ describe('DownloadOrchestrator.sendUrl', () => {
     await orch.sendUrl('https://example.com/file.zip', '');
 
     expect(mockAria2Client.addUri).not.toHaveBeenCalled();
-    expect(deps.openProtocolNewTask).toHaveBeenCalledWith(
-      'https://example.com/file.zip',
-      '',
-      '',
-    );
+    expect(deps.openProtocolNewTask).toHaveBeenCalledWith('https://example.com/file.zip', '', '');
   });
 
   it('falls back to Motrix when Aria2 client is unavailable', async () => {
@@ -197,11 +193,7 @@ describe('DownloadOrchestrator.sendUrl', () => {
 
     await orch.sendUrl('https://example.com/file.zip', '');
 
-    expect(deps.openProtocolNewTask).toHaveBeenCalledWith(
-      'https://example.com/file.zip',
-      '',
-      '',
-    );
+    expect(deps.openProtocolNewTask).toHaveBeenCalledWith('https://example.com/file.zip', '', '');
   });
 
   it('falls back to Motrix when Aria2 RPC fails', async () => {
@@ -218,11 +210,7 @@ describe('DownloadOrchestrator.sendUrl', () => {
     await orch.sendUrl('https://example.com/file.zip', '');
 
     expect(mockAria2Client.addUri).toHaveBeenCalled();
-    expect(deps.openProtocolNewTask).toHaveBeenCalledWith(
-      'https://example.com/file.zip',
-      '',
-      '',
-    );
+    expect(deps.openProtocolNewTask).toHaveBeenCalledWith('https://example.com/file.zip', '', '');
     expect(deps.diagnosticLog.append).toHaveBeenCalledWith(
       expect.objectContaining({
         code: 'aria2_unreachable',
@@ -253,16 +241,15 @@ describe('DownloadOrchestrator.sendUrl', () => {
 
   it('uses default download target (motrix) when target not set', async () => {
     const deps = createMockDeps({
-      getSettings: () => ({ ...DEFAULT_DOWNLOAD_SETTINGS, target: undefined as unknown as 'motrix' }),
+      getSettings: () => ({
+        ...DEFAULT_DOWNLOAD_SETTINGS,
+        target: undefined as unknown as 'motrix',
+      }),
     });
     const orch = new DownloadOrchestrator(deps);
 
     await orch.sendUrl('https://example.com/file.zip', '');
 
-    expect(deps.openProtocolNewTask).toHaveBeenCalledWith(
-      'https://example.com/file.zip',
-      '',
-      '',
-    );
+    expect(deps.openProtocolNewTask).toHaveBeenCalledWith('https://example.com/file.zip', '', '');
   });
 });

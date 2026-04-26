@@ -229,7 +229,14 @@ describe('migrateStorage', () => {
     const api = createMockStorage({
       _version: 2,
       settings: { enabled: true, target: 'aria2' },
-      aria2: { enabled: true, host: '127.0.0.1', port: 6800, secret: '', secure: false, downloadDir: '' },
+      aria2: {
+        enabled: true,
+        host: '127.0.0.1',
+        port: 6800,
+        secret: '',
+        secure: false,
+        downloadDir: '',
+      },
     });
 
     await migrateStorage(api);
