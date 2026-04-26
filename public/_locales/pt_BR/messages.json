@@ -407,5 +407,65 @@
   "error_api_timeout": {
     "message": "Tempo limite de conexão",
     "description": "Error when the API connection times out"
+  },
+  "options_section_aria2": {
+    "message": "Aria2 RPC",
+    "description": "Settings section for Aria2 RPC configuration"
+  },
+  "options_aria2_enabled_label": {
+    "message": "Enable Aria2 RPC",
+    "description": "Toggle label for enabling Aria2 RPC"
+  },
+  "options_aria2_host_label": {
+    "message": "Host",
+    "description": "Label for Aria2 host input"
+  },
+  "options_aria2_host_placeholder": {
+    "message": "127.0.0.1",
+    "description": "Placeholder for Aria2 host input"
+  },
+  "options_aria2_port_label": {
+    "message": "Port",
+    "description": "Label for Aria2 port input"
+  },
+  "options_aria2_secure_label": {
+    "message": "HTTPS",
+    "description": "Label for Aria2 HTTPS toggle"
+  },
+  "options_aria2_secret_label": {
+    "message": "Secret Token",
+    "description": "Label for Aria2 secret token input"
+  },
+  "options_aria2_secret_placeholder": {
+    "message": "RPC secret",
+    "description": "Placeholder for Aria2 secret input"
+  },
+  "options_aria2_dir_label": {
+    "message": "Download Directory",
+    "description": "Label for Aria2 download directory input"
+  },
+  "options_aria2_dir_placeholder": {
+    "message": "/downloads",
+    "description": "Placeholder for Aria2 download directory"
+  },
+  "options_test_aria2": {
+    "message": "Test Aria2 Connection",
+    "description": "Button to test Aria2 connection"
+  },
+  "options_download_target_label": {
+    "message": "Download Target",
+    "description": "Label for download target selection"
+  },
+  "options_download_target_desc": {
+    "message": "Choose where to send downloads",
+    "description": "Description for download target selection"
+  },
+  "options_target_motrix": {
+    "message": "Motrix Next",
+    "description": "Download target option: Motrix Next"
+  },
+  "options_target_aria2": {
+    "message": "Aria2 RPC",
+    "description": "Download target option: Aria2 RPC"
   }
 }

@@ -83,6 +83,7 @@ const DiagnosticCodeSchema = z.enum([
   'aria2_unreachable',
   'aria2_auth_failed',
   'aria2_download_added',
+  'aria2_config_invalid',
   // Download interception lifecycle
   'download_intercepted',
   'download_skipped',

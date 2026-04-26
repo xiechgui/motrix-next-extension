@@ -400,6 +400,7 @@ describe('parseStorage', () => {
       minFileSize: 0,
       hideDownloadBar: false,
       autoLaunchApp: true,
+      target: 'motrix',
     });
     expect(result.siteRules).toEqual([]);
     expect(result.uiPrefs).toEqual({ theme: 'system', colorScheme: 'amber', locale: 'auto' });
