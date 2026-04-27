@@ -16,7 +16,7 @@
 import { ref, provide, onMounted, onUnmounted, computed, watch } from 'vue';
 import { NConfigProvider, createDiscreteApi } from 'naive-ui';
 import { StorageService } from '@/lib/storage';
-import type { ConnectionConfig, Aria2Config, DownloadTarget } from '@/shared/types';
+import type { ConnectionConfig, DownloadTarget } from '@/shared/types';
 import {
   DEFAULT_CONNECTION_CONFIG,
   DEFAULT_DOWNLOAD_SETTINGS,
@@ -93,6 +93,12 @@ interface SettingsForm {
   hideDownloadBar: boolean;
   autoLaunchApp: boolean;
   target: DownloadTarget;
+  aria2Enabled: boolean;
+  aria2Host: string;
+  aria2Port: number;
+  aria2Secret: string;
+  aria2Secure: boolean;
+  aria2DownloadDir: string;
 }
 
 function buildForm(): SettingsForm {
@@ -104,6 +110,12 @@ function buildForm(): SettingsForm {
     hideDownloadBar: DEFAULT_DOWNLOAD_SETTINGS.hideDownloadBar,
     autoLaunchApp: DEFAULT_DOWNLOAD_SETTINGS.autoLaunchApp,
     target: DEFAULT_DOWNLOAD_SETTINGS.target,
+    aria2Enabled: DEFAULT_ARIA2_CONFIG.enabled,
+    aria2Host: DEFAULT_ARIA2_CONFIG.host,
+    aria2Port: DEFAULT_ARIA2_CONFIG.port,
+    aria2Secret: DEFAULT_ARIA2_CONFIG.secret,
+    aria2Secure: DEFAULT_ARIA2_CONFIG.secure,
+    aria2DownloadDir: DEFAULT_ARIA2_CONFIG.downloadDir,
   };
 }
 
@@ -128,6 +140,14 @@ const {
       hideDownloadBar: f.hideDownloadBar,
       autoLaunchApp: f.autoLaunchApp,
       target: f.target,
+    });
+    await storageService.saveAria2Config({
+      enabled: f.aria2Enabled,
+      host: f.aria2Host,
+      port: f.aria2Port,
+      secret: f.aria2Secret,
+      secure: f.aria2Secure,
+      downloadDir: f.aria2DownloadDir,
     });
   },
   afterSave: () => {
@@ -160,12 +180,7 @@ const { connectionStatus, connectionVersion, connectionError, testingConnection,
 
 // ─── Aria2 Settings ────────────────────────────────────────────────
 
-const aria2 = useAria2({
-  initialConfig: DEFAULT_ARIA2_CONFIG,
-  onSave: async (config: Aria2Config) => {
-    await storageService.saveAria2Config(config);
-  },
-});
+const aria2 = useAria2();
 
 // ─── Extension Version ─────────────────────────────────────────────
 
@@ -184,15 +199,13 @@ async function loadFromStorage(): Promise<void> {
   form.value.hideDownloadBar = data.settings.hideDownloadBar;
   form.value.autoLaunchApp = data.settings.autoLaunchApp;
   form.value.target = data.settings.target ?? 'motrix';
+  form.value.aria2Enabled = data.aria2.enabled;
+  form.value.aria2Host = data.aria2.host;
+  form.value.aria2Port = data.aria2.port;
+  form.value.aria2Secret = data.aria2.secret;
+  form.value.aria2Secure = data.aria2.secure;
+  form.value.aria2DownloadDir = data.aria2.downloadDir;
   resetSnapshot();
-
-  // Hydrate Aria2 config
-  aria2.enabled.value = data.aria2.enabled;
-  aria2.host.value = data.aria2.host;
-  aria2.port.value = data.aria2.port;
-  aria2.secret.value = data.aria2.secret;
-  aria2.secure.value = data.aria2.secure;
-  aria2.downloadDir.value = data.aria2.downloadDir;
 
   // Hydrate composables (already type-safe from Zod)
   appearance.hydrate(data.uiPrefs);
@@ -329,29 +342,35 @@ onUnmounted(() => {
               <h2 class="section-title">{{ i18n('options_section_aria2', 'Aria2 RPC') }}</h2>
               <div class="card">
                 <Aria2Section
-                  :enabled="aria2.enabled.value"
-                  :host="aria2.host.value"
-                  :port="aria2.port.value"
-                  :secret="aria2.secret.value"
-                  :secure="aria2.secure.value"
-                  :download-dir="aria2.downloadDir.value"
+                  :enabled="form.aria2Enabled"
+                  :host="form.aria2Host"
+                  :port="form.aria2Port"
+                  :secret="form.aria2Secret"
+                  :secure="form.aria2Secure"
+                  :download-dir="form.aria2DownloadDir"
                   :testing="aria2.testing.value"
                   :connected="aria2.connected.value"
                   :version="aria2.version.value"
                   :error="aria2.error.value"
-                  @update:enabled="aria2.enabled.value = $event"
-                  @update:host="aria2.host.value = $event"
-                  @update:port="aria2.port.value = $event"
-                  @update:secret="aria2.secret.value = $event"
-                  @update:secure="aria2.secure.value = $event"
-                  @update:download-dir="aria2.downloadDir.value = $event"
-                  @test="aria2.testConnection"
+                  @update:enabled="form.aria2Enabled = $event"
+                  @update:host="form.aria2Host = $event"
+                  @update:port="form.aria2Port = $event"
+                  @update:secret="form.aria2Secret = $event"
+                  @update:secure="form.aria2Secure = $event"
+                  @update:download-dir="form.aria2DownloadDir = $event"
+                  @test="
+                    () =>
+                      aria2.testConnection({
+                        enabled: form.aria2Enabled,
+                        host: form.aria2Host,
+                        port: form.aria2Port,
+                        secret: form.aria2Secret,
+                        secure: form.aria2Secure,
+                        downloadDir: form.aria2DownloadDir,
+                      })
+                  "
                 />
-                <SettingsActionBar
-                  :is-dirty="aria2.hasChanges.value"
-                  @save="aria2.save()"
-                  @discard="aria2.reset"
-                />
+                <SettingsActionBar :is-dirty="isDirty" @save="handleSave" @discard="handleReset" />
               </div>
             </div>
 
