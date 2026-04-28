@@ -59,6 +59,19 @@ export interface OrchestratorDeps {
    * The extension has already cancelled the browser download at this point.
    */
   onRouteFailed?: (info: { url: string; filename: string }) => void;
+  /**
+   * Open a download confirmation popup for Aria2 downloads.
+   * Returns a promise that resolves when user confirms or cancels.
+   */
+  openDownloadConfirm?: (params: {
+    url: string;
+    filename: string;
+    fileSize: number;
+    referer: string;
+    cookie: string;
+    dir: string;
+    requestId: string;
+  }) => Promise<boolean>;
 }
 
 /** Shape of a browser DownloadItem as received from chrome.downloads events. */
@@ -100,10 +113,12 @@ export class DownloadOrchestrator {
    * Called from `onDeterminingFilename` — the download is suspended by Chrome
    * until the caller invokes `suggest()`. No `pause()` is needed.
    *
-   * @returns `true` if the download was intercepted (cancel called),
+   * @param item - The download item from the browser event.
+   * @param skipCancel - When true, skip cancel/erase (caller handles via suggest()).
+   * @returns `true` if the download was intercepted,
    *          `false` if the browser should continue (caller calls suggest).
    */
-  async handleCreated(item: DownloadItem): Promise<boolean> {
+  async handleCreated(item: DownloadItem, skipCancel = false): Promise<boolean> {
     const settings = this.deps.getSettings();
     const tabUrl = await this.deps.getTabUrl();
 
@@ -147,7 +162,9 @@ export class DownloadOrchestrator {
     const displayName = item.filename || extractFilenameFromUrl(effectiveUrl) || 'download';
     const cookie = await this.collectCookies(effectiveUrl);
 
-    await this.safeCancel(item.id);
+    if (!skipCancel) {
+      await this.safeCancel(item.id);
+    }
 
     const routed = await this.sendToDesktop(effectiveUrl, tabUrl, cookie, displayName);
     if (!routed) {
@@ -204,6 +221,32 @@ export class DownloadOrchestrator {
     if (target === 'aria2' && this.deps.aria2Client && this.deps.getAria2Config) {
       const aria2Config = this.deps.getAria2Config();
       if (aria2Config.enabled) {
+        // Show confirmation popup if available
+        if (this.deps.openDownloadConfirm) {
+          const requestId = `aria2-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+          const confirmed = await this.deps.openDownloadConfirm({
+            url,
+            filename: displayName,
+            fileSize: 0, // Will be populated by caller if known
+            referer,
+            cookie,
+            dir: aria2Config.downloadDir || '',
+            requestId,
+          });
+          if (!confirmed) {
+            this.deps.diagnosticLog.append({
+              level: 'info',
+              code: 'download_skipped',
+              message: `User cancelled Aria2 download: ${displayName}`,
+              context: { url },
+            });
+            return true; // Cancelled by user — considered handled
+          }
+          // Download will be sent by the popup via message passing
+          return true;
+        }
+
+        // No confirmation popup — send directly
         try {
           const response = await this.deps.aria2Client.addUri({
             url,

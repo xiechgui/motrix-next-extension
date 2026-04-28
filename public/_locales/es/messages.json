@@ -467,5 +467,113 @@
   "options_target_aria2": {
     "message": "Aria2 RPC",
     "description": "Download target option: Aria2 RPC"
+  },
+  "confirm_download_title": {
+    "message": "Confirm Download",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_file": {
+    "message": "File",
+    "description": "Label for file name in confirmation popup"
+  },
+  "confirm_size": {
+    "message": "Size",
+    "description": "Label for file size in confirmation popup"
+  },
+  "confirm_unknown_size": {
+    "message": "Tamaño desconocido",
+    "description": "Shown when file size is not available"
+  },
+  "confirm_filename_label": {
+    "message": "Nombre del archivo",
+    "description": "Label for filename input field"
+  },
+  "confirm_dir_label": {
+    "message": "Directorio de descarga",
+    "description": "Label for download directory input field"
+  },
+  "confirm_dir_placeholder": {
+    "message": "Ingrese el directorio de descarga",
+    "description": "Placeholder for download directory input"
+  },
+  "confirm_proxy_label": {
+    "message": "Proxy",
+    "description": "Label for proxy input field"
+  },
+  "confirm_proxy_placeholder": {
+    "message": "Ingrese la dirección del proxy",
+    "description": "Placeholder for proxy input"
+  },
+  "confirm_cancel": {
+    "message": "Cancelar",
+    "description": "Cancel button in confirmation popup"
+  },
+  "confirm_start": {
+    "message": "Start Download",
+    "description": "Start download button in confirmation popup"
+  },
+  "confirm_send_to_aria2": {
+    "message": "Send to Aria2",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_aria2_rpc_label": {
+    "message": "aria2 rpc",
+    "description": "Label for aria2 rpc field"
+  },
+  "confirm_aria2_info_label": {
+    "message": "Estado de aria2",
+    "description": "Label for aria2 info field"
+  },
+  "confirm_size_label": {
+    "message": "Tamaño del archivo",
+    "description": "Label for size field"
+  },
+  "confirm_confirm": {
+    "message": "Confirmar",
+    "description": "Confirm button in confirmation popup"
+  },
+  "confirm_advance": {
+    "message": "Avanzado",
+    "description": "Advanced options button"
+  },
+  "confirm_advanced": {
+    "message": "Opciones avanzadas",
+    "description": "Advanced section title"
+  },
+  "confirm_checking": {
+    "message": "Verificando...",
+    "description": "Shown while checking aria2 status"
+  },
+  "confirm_save_as_default": {
+    "message": "Guardar como valor predeterminado",
+    "description": "Checkbox to save current value as default for next time"
+  },
+  "confirm_connected": {
+    "message": "Conectado",
+    "description": "Shown when aria2 is connected"
+  },
+  "confirm_disconnected": {
+    "message": "Desconectado",
+    "description": "Shown when aria2 is disconnected"
+  },
+  "confirm_url_label": {
+    "message": "URL de descarga",
+    "description": "Confirm popup: confirm_url_label"
+  },
+  "confirm_url_placeholder": {
+    "message": "Ingrese la URL de descarga",
+    "description": "Confirm popup: confirm_url_placeholder"
+  },
+  "confirm_headers_label": {
+    "message": "Encabezados de solicitud",
+    "description": "Confirm popup: confirm_headers_label"
+  },
+  "confirm_headers_placeholder": {
+    "message": "Un encabezado por línea, formato: Header-Name: value",
+    "description": "Confirm popup: confirm_headers_placeholder"
+  },
+  "confirm_window_title": {
+    "message": "Confirmar descarga",
+    "description": "Title of the download confirmation popup window"
   }
 }

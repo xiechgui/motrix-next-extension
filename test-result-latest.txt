@@ -1,0 +1,75 @@
+﻿
+ RUN  v4.1.2 C:/Users/Landius/Space/motrix-next-extension
+
+ 鉁?__tests__/integration/download-orchestrator.test.ts (29 tests) 40ms
+ 鉁?__tests__/unit/orchestrator-send.test.ts (15 tests) 24ms
+ 鉁?__tests__/unit/i18n-dictionaries.test.ts (33 tests) 883ms
+     鉁?extracts message strings from Chrome i18n format  673ms
+ 鉁?__tests__/unit/desktop-client.test.ts (24 tests) 28ms
+ 鉁?__tests__/unit/use-preference-form.test.ts (17 tests) 42ms
+ 鉁?__tests__/unit/storage-migration.test.ts (14 tests) 18ms
+ 鉁?__tests__/unit/use-polling.test.ts (9 tests) 23ms
+ 鉁?__tests__/unit/storage-schema.test.ts (84 tests) 45ms
+ 鉁?__tests__/unit/wake.test.ts (7 tests) 1324ms
+     鉁?returns false when polling times out (tab stays open)  306ms
+     鉁?uses default timeouts when not specified  515ms
+ 鉁?__tests__/unit/storage-service.test.ts (8 tests) 21ms
+ 鉁?__tests__/unit/aria2-client.test.ts (14 tests) 21ms
+ 鉁?__tests__/unit/diagnostic-log.test.ts (13 tests) 19ms
+ 鉁?__tests__/unit/download-filter.test.ts (42 tests) 19ms
+ 鉁?__tests__/unit/download-bar.test.ts (3 tests) 13ms
+ 鉁?__tests__/unit/composable-site-rules.test.ts (5 tests) 17ms
+ 鉁?__tests__/unit/connection.test.ts (6 tests) 10ms
+ 鉁?__tests__/unit/metadata-collector.test.ts (9 tests) 15ms
+ 鉁?__tests__/unit/context-menu.test.ts (4 tests) 9ms
+ 鉁?__tests__/unit/composable-appearance.test.ts (4 tests) 17ms
+ 鉁?__tests__/unit/composable-diagnostics.test.ts (4 tests) 17ms
+ 鉁?__tests__/unit/protocol-launcher.test.ts (6 tests) 8ms
+ 鉁?__tests__/unit/url.test.ts (8 tests) 10ms
+ 鉁?__tests__/unit/notification.test.ts (3 tests) 7ms
+ 鉁?__tests__/unit/theme.test.ts (5 tests) 7ms
+ 鉁?__tests__/unit/thunder.test.ts (5 tests) 7ms
+ 鉂?__tests__/unit/i18n-engine.test.ts (15 tests | 1 failed) 37207ms
+     脳 returns the translation for the current locale 37039ms
+     鉁?falls back to en when key is missing in current locale 159ms
+     鉁?falls back to provided fallback string when key is missing everywhere 1ms
+     鉁?returns raw key when no fallback provided and key is missing 1ms
+     鉁?uses en dictionary when initialized with unknown locale 0ms
+     鉁?replaces $1 with the first substitution 0ms
+     鉁?replaces $1 in zh_CN locale 0ms
+     鉁?replaces multiple positional placeholders 0ms
+     鉁?returns fallback with substitutions when key is missing 1ms
+     鉁?handles zero substitutions gracefully 1ms
+     鉁?switches to the new locale 1ms
+     鉁?reports the current locale 0ms
+     鉁?falls back to en when switching to unknown locale 0ms
+     鉁?can switch back and forth between locales 1ms
+     鉁?follows chain: current locale 鈫?en 鈫?fallback 鈫?key 1ms
+npx : 
+所在位置 行:1 字符: 60
++ ...  | Invoke-Expression ; npx vitest run --reporter=default 2>&1 | Out-F ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+鈳幆鈳幆鈳幆鈳?Failed Tests 1 鈳幆鈳幆鈳幆鈳?
+ FAIL  __tests__/unit/i18n-engine.test.ts > I18nEngine.t > returns the translat
+ion for the current locale
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or co
+nfigure it globally with "testTimeout".
+ 鉂?__tests__/unit/i18n-engine.test.ts:6:3
+      4|
+      5| describe('I18nEngine.t', () => {
+      6|   it('returns the translation for the current locale', async () => {
+       |   ^
+      7|     const { I18nEngine } = await import('@/shared/i18n/engine');
+      8|     const engine = new I18nEngine('zh_CN');
+
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆[1/1]鈳?
+
+ Test Files  1 failed | 25 passed (26)
+      Tests  1 failed | 385 passed (386)
+   Start at  07:17:01
+   Duration  45.69s (transform 2.22s, setup 0ms, import 9.79s, tests 39.85s, environment 234.44s)
+

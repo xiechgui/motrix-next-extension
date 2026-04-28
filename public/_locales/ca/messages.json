@@ -467,5 +467,113 @@
   "options_target_aria2": {
     "message": "Aria2 RPC",
     "description": "Download target option: Aria2 RPC"
+  },
+  "confirm_download_title": {
+    "message": "Confirm Download",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_file": {
+    "message": "File",
+    "description": "Label for file name in confirmation popup"
+  },
+  "confirm_size": {
+    "message": "Size",
+    "description": "Label for file size in confirmation popup"
+  },
+  "confirm_unknown_size": {
+    "message": "Mida desconeguda",
+    "description": "Shown when file size is not available"
+  },
+  "confirm_filename_label": {
+    "message": "Nom del fitxer",
+    "description": "Label for filename input field"
+  },
+  "confirm_dir_label": {
+    "message": "Directori de descàrrega",
+    "description": "Label for download directory input field"
+  },
+  "confirm_dir_placeholder": {
+    "message": "Introduïu el directori de descàrrega",
+    "description": "Placeholder for download directory input"
+  },
+  "confirm_proxy_label": {
+    "message": "Proxy",
+    "description": "Label for proxy input field"
+  },
+  "confirm_proxy_placeholder": {
+    "message": "Introduïu l'adreça del proxy",
+    "description": "Placeholder for proxy input"
+  },
+  "confirm_cancel": {
+    "message": "Cancel·la",
+    "description": "Cancel button in confirmation popup"
+  },
+  "confirm_start": {
+    "message": "Start Download",
+    "description": "Start download button in confirmation popup"
+  },
+  "confirm_send_to_aria2": {
+    "message": "Send to Aria2",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_aria2_rpc_label": {
+    "message": "aria2 rpc",
+    "description": "Label for aria2 rpc field"
+  },
+  "confirm_aria2_info_label": {
+    "message": "Estat de aria2",
+    "description": "Label for aria2 info field"
+  },
+  "confirm_size_label": {
+    "message": "Mida del fitxer",
+    "description": "Label for size field"
+  },
+  "confirm_confirm": {
+    "message": "Confirma",
+    "description": "Confirm button in confirmation popup"
+  },
+  "confirm_advance": {
+    "message": "Avançat",
+    "description": "Advanced options button"
+  },
+  "confirm_advanced": {
+    "message": "Opcions avançades",
+    "description": "Advanced section title"
+  },
+  "confirm_checking": {
+    "message": "Comprovant...",
+    "description": "Shown while checking aria2 status"
+  },
+  "confirm_save_as_default": {
+    "message": "Desa com a predeterminat",
+    "description": "Checkbox to save current value as default for next time"
+  },
+  "confirm_connected": {
+    "message": "Connectat",
+    "description": "Shown when aria2 is connected"
+  },
+  "confirm_disconnected": {
+    "message": "Desconnectat",
+    "description": "Shown when aria2 is disconnected"
+  },
+  "confirm_url_label": {
+    "message": "URL de descàrrega",
+    "description": "Confirm popup: confirm_url_label"
+  },
+  "confirm_url_placeholder": {
+    "message": "Introduïu l'URL de descàrrega",
+    "description": "Confirm popup: confirm_url_placeholder"
+  },
+  "confirm_headers_label": {
+    "message": "Capçaleres de sol·licitud",
+    "description": "Confirm popup: confirm_headers_label"
+  },
+  "confirm_headers_placeholder": {
+    "message": "Una capçalera per línia, format: Header-Name: value",
+    "description": "Confirm popup: confirm_headers_placeholder"
+  },
+  "confirm_window_title": {
+    "message": "Confirma la descàrrega",
+    "description": "Title of the download confirmation popup window"
   }
 }

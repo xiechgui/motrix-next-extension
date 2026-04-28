@@ -254,6 +254,137 @@ export default defineBackground(() => {
         url: info.url,
       });
     },
+    openDownloadConfirm: async (params) => {
+      return new Promise((resolve) => {
+        const popupUrl = chrome.runtime.getURL(
+          `/download-confirm.html?data=${encodeURIComponent(JSON.stringify(params))}`,
+        );
+        const width = 520;
+        const height = 480;
+
+        // Store the resolver so the message handler can call it
+        confirmResolvers.set(params.requestId, resolve);
+
+        // Center the popup on the current screen
+        void chrome.windows.getCurrent({ populate: false }, (currentWindow) => {
+          const left = currentWindow.left
+            ? Math.round(currentWindow.left + (currentWindow.width! - width) / 2)
+            : undefined;
+          const top = currentWindow.top
+            ? Math.round(currentWindow.top + (currentWindow.height! - height) / 2)
+            : undefined;
+
+          void chrome.windows.create({
+            url: popupUrl,
+            type: 'popup',
+            width,
+            height,
+            left,
+            top,
+            focused: true,
+          });
+        });
+
+        // Timeout after 5 minutes (user abandoned)
+        setTimeout(() => {
+          if (confirmResolvers.has(params.requestId)) {
+            confirmResolvers.delete(params.requestId);
+            resolve(false);
+          }
+        }, 300000);
+      });
+    },
+  });
+
+  // ─── Pending download confirmation resolvers ──────────
+  const confirmResolvers = new Map<string, (value: boolean) => void>();
+
+  // Handle messages from download confirmation popup
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message.type === 'aria2-confirm-download') {
+      console.log('aria2-confirm-download', message);
+      const params = message.params as {
+        requestId: string;
+        url: string;
+        filename?: string;
+        dir?: string;
+        proxy?: string;
+        referer?: string;
+        cookie?: string;
+        headers?: string;
+      };
+
+      void (async () => {
+        try {
+          const response = await aria2Client.addUri({
+            url: params.url,
+            filename: params.filename,
+            dir: params.dir,
+            proxy: params.proxy,
+            referer: params.referer,
+            cookie: params.cookie,
+            headers: params.headers,
+          });
+
+          logInfo(
+            'aria2_download_added',
+            `Aria2 download confirmed: ${params.filename ?? params.url} (gid: ${response.gid})`,
+            {
+              url: params.url,
+              gid: response.gid,
+            },
+          );
+
+          // Resolve the confirmation promise
+          const resolver = confirmResolvers.get(params.requestId);
+          if (resolver) {
+            confirmResolvers.delete(params.requestId);
+            resolver(true);
+          }
+        } catch (e) {
+          logError(
+            'aria2_unreachable',
+            `Aria2 download failed after confirmation: ${e instanceof Error ? e.message : String(e)}`,
+            {
+              url: params.url,
+            },
+          );
+
+          const resolver = confirmResolvers.get(params.requestId);
+          if (resolver) {
+            confirmResolvers.delete(params.requestId);
+            resolver(false);
+          }
+        }
+      })();
+
+      sendResponse({ success: true });
+      return true;
+    }
+
+    if (message.type === 'aria2-cancel-download') {
+      const resolver = confirmResolvers.get(message.requestId as string);
+      if (resolver) {
+        confirmResolvers.delete(message.requestId as string);
+        resolver(false);
+      }
+      sendResponse({ success: true });
+      return true;
+    }
+
+    if (message.type === 'aria2-get-status') {
+      void (async () => {
+        try {
+          const status = await aria2Client.getVersion();
+          sendResponse({ connected: true, version: status.version });
+        } catch {
+          sendResponse({ connected: false, version: '' });
+        }
+      })();
+      return true;
+    }
+
+    return false;
   });
 
   // ─── Download interception ─────────────────────────────
@@ -296,9 +427,14 @@ export default defineBackground(() => {
   } else {
     // Chrome path: onDeterminingFilename is a blocking event.
     // Chrome holds the download in pending state until suggest() is called.
+    // We call suggest() first to release Chrome's hold, then cancel/erase
+    // the download via the orchestrator.
     chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
       void ensureConfigLoaded().then(async () => {
         try {
+          // Release Chrome's hold on the download first
+          suggest();
+
           const intercepted = await orchestrator.handleCreated({
             id: item.id,
             url: item.url,
@@ -309,7 +445,10 @@ export default defineBackground(() => {
             byExtensionId: (item as unknown as Record<string, string>).byExtensionId,
             state: item.state,
           });
-          if (!intercepted) suggest();
+
+          if (!intercepted) {
+            // Not intercepted — download proceeds normally (already suggested above)
+          }
         } catch (e) {
           logError(
             'download_handler_error',
@@ -318,7 +457,7 @@ export default defineBackground(() => {
               url: item.url,
             },
           );
-          suggest(); // Error → let browser handle it
+          // Error — download already suggested above, let it proceed
         }
       });
       return true; // Will call suggest() asynchronously

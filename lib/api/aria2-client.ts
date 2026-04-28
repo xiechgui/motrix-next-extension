@@ -26,8 +26,10 @@ export interface Aria2DownloadRequest {
   cookie?: string;
   filename?: string;
   dir?: string;
+  proxy?: string;
   'user-agent'?: string;
   header?: string[];
+  headers?: string;
 }
 
 export interface Aria2DownloadResponse {
@@ -200,11 +202,27 @@ export class Aria2Client {
     if (request.cookie) {
       options.cookie = request.cookie;
     }
+    if (request.proxy) {
+      options['all-proxy'] = request.proxy;
+    }
     if (request['user-agent']) {
       options['user-agent'] = request['user-agent'];
     }
+
+    // Parse headers from string (newline-separated "Header-Name: value")
+    const headers: string[] = [];
     if (request.header && request.header.length > 0) {
-      options.header = request.header;
+      headers.push(...request.header);
+    }
+    if (request.headers) {
+      const parsedHeaders = request.headers
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0 && line.includes(':'));
+      headers.push(...parsedHeaders);
+    }
+    if (headers.length > 0) {
+      options.header = headers;
     }
 
     const gid = await this.rpcCall<string>('addUri', [[request.url], options]);

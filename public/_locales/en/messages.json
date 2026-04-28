@@ -467,5 +467,113 @@
   "options_target_aria2": {
     "message": "Aria2 RPC",
     "description": "Download target option: Aria2 RPC"
+  },
+  "confirm_download_title": {
+    "message": "Confirm Download",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_file": {
+    "message": "File",
+    "description": "Label for file name in confirmation popup"
+  },
+  "confirm_size": {
+    "message": "Size",
+    "description": "Label for file size in confirmation popup"
+  },
+  "confirm_unknown_size": {
+    "message": "Unknown size",
+    "description": "Shown when file size is not available"
+  },
+  "confirm_filename_label": {
+    "message": "Filename",
+    "description": "Label for filename input field"
+  },
+  "confirm_dir_label": {
+    "message": "Download Directory",
+    "description": "Label for download directory input field"
+  },
+  "confirm_dir_placeholder": {
+    "message": "/downloads",
+    "description": "Placeholder for download directory input"
+  },
+  "confirm_proxy_label": {
+    "message": "Proxy (optional)",
+    "description": "Label for proxy input field"
+  },
+  "confirm_proxy_placeholder": {
+    "message": "http://127.0.0.1:7890",
+    "description": "Placeholder for proxy input"
+  },
+  "confirm_cancel": {
+    "message": "cancel",
+    "description": "Cancel button in confirmation popup"
+  },
+  "confirm_start": {
+    "message": "Start Download",
+    "description": "Start download button in confirmation popup"
+  },
+  "confirm_send_to_aria2": {
+    "message": "Send to Aria2",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_aria2_rpc_label": {
+    "message": "aria2 rpc",
+    "description": "Label for aria2 rpc field"
+  },
+  "confirm_aria2_info_label": {
+    "message": "aria2 info",
+    "description": "Label for aria2 info field"
+  },
+  "confirm_size_label": {
+    "message": "size",
+    "description": "Label for size field"
+  },
+  "confirm_confirm": {
+    "message": "confirm",
+    "description": "Confirm button in confirmation popup"
+  },
+  "confirm_advance": {
+    "message": "advance",
+    "description": "Advanced options button"
+  },
+  "confirm_advanced": {
+    "message": "Advanced",
+    "description": "Advanced section title"
+  },
+  "confirm_checking": {
+    "message": "checking...",
+    "description": "Shown while checking aria2 status"
+  },
+  "confirm_connected": {
+    "message": "Connected",
+    "description": "Shown when aria2 is connected"
+  },
+  "confirm_disconnected": {
+    "message": "Disconnected",
+    "description": "Shown when aria2 is disconnected"
+  },
+  "confirm_save_as_default": {
+    "message": "Save as default",
+    "description": "Checkbox to save current value as default for next time"
+  },
+  "confirm_url_label": {
+    "message": "Download URL",
+    "description": "Confirm popup: confirm_url_label"
+  },
+  "confirm_url_placeholder": {
+    "message": "Enter download URL",
+    "description": "Confirm popup: confirm_url_placeholder"
+  },
+  "confirm_headers_label": {
+    "message": "Request Headers",
+    "description": "Confirm popup: confirm_headers_label"
+  },
+  "confirm_headers_placeholder": {
+    "message": "One header per line, format: Header-Name: value",
+    "description": "Confirm popup: confirm_headers_placeholder"
+  },
+  "confirm_window_title": {
+    "message": "Confirm Download",
+    "description": "Title of the download confirmation popup window"
   }
 }

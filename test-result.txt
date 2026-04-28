@@ -1,0 +1,33 @@
+﻿
+ RUN  v4.1.2 C:/Users/Landius/Space/motrix-next-extension
+
+ 鉂?__tests__/unit/i18n-engine.test.ts (15 tests | 1 failed) 23426ms
+     脳 returns the translation for the current locale 23283ms
+npx : 
+所在位置 行:1 字符: 60
++ ... -on-cd | Out-String | Invoke-Expression ; npx vitest run 2>&1 | Out-F ...
++                                               ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+鈳幆鈳幆鈳幆鈳?Failed Tests 1 鈳幆鈳幆鈳幆鈳?
+ FAIL  __tests__/unit/i18n-engine.test.ts > I18nEngine.t > returns the translat
+ion for the current locale
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or co
+nfigure it globally with "testTimeout".
+ 鉂?__tests__/unit/i18n-engine.test.ts:6:3
+      4|
+      5| describe('I18nEngine.t', () => {
+      6|   it('returns the translation for the current locale', async () => {
+       |   ^
+      7|     const { I18nEngine } = await import('@/shared/i18n/engine');
+      8|     const engine = new I18nEngine('zh_CN');
+
+鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆鈳幆[1/1]鈳?
+
+ Test Files  1 failed | 25 passed (26)
+      Tests  1 failed | 385 passed (386)
+   Start at  01:07:50
+   Duration  32.72s (transform 2.28s, setup 0ms, import 8.30s, tests 26.08s, environment 197.84s)
+
