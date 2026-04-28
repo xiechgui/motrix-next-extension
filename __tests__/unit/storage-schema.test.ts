@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   parseConnectionConfig,
   parseDownloadSettings,
+  parseAria2Config,
   parseSiteRules,
   parseUiPrefs,
   parseDiagnosticEvents,
@@ -66,6 +67,7 @@ describe('parseDownloadSettings', () => {
       minFileSize: 10,
       hideDownloadBar: true,
       autoLaunchApp: false,
+      target: 'motrix',
     };
     const result = parseDownloadSettings(input);
     expect(result).toEqual(input);
@@ -78,6 +80,7 @@ describe('parseDownloadSettings', () => {
       minFileSize: 0,
       hideDownloadBar: false,
       autoLaunchApp: true,
+      target: 'motrix',
     });
   });
 
@@ -88,6 +91,7 @@ describe('parseDownloadSettings', () => {
       minFileSize: 0,
       hideDownloadBar: false,
       autoLaunchApp: true,
+      target: 'motrix',
     });
   });
 
@@ -104,6 +108,77 @@ describe('parseDownloadSettings', () => {
   it('strips extra fields', () => {
     const result = parseDownloadSettings({ enabled: true, unknown: 42 });
     expect(result).not.toHaveProperty('unknown');
+  });
+
+  it('fills missing target with default', () => {
+    const result = parseDownloadSettings({ enabled: true });
+    expect(result.target).toBe('motrix');
+  });
+
+  it('accepts valid target values', () => {
+    expect(parseDownloadSettings({ target: 'motrix' }).target).toBe('motrix');
+    expect(parseDownloadSettings({ target: 'aria2' }).target).toBe('aria2');
+  });
+
+  it('replaces invalid target with default', () => {
+    const result = parseDownloadSettings({ target: 'invalid' });
+    expect(result.target).toBe('motrix');
+  });
+});
+
+// ─── Aria2Config Schema ─────────────────────────────────
+
+describe('parseAria2Config', () => {
+  it('returns valid config unchanged', () => {
+    const input = {
+      enabled: true,
+      host: '192.168.1.100',
+      port: 6800,
+      secret: 'mysecret',
+      secure: true,
+      downloadDir: '/downloads',
+    };
+    const result = parseAria2Config(input);
+    expect(result).toEqual(input);
+  });
+
+  it('fills missing fields with defaults', () => {
+    const result = parseAria2Config({});
+    expect(result).toEqual({
+      enabled: false,
+      host: '127.0.0.1',
+      port: 6800,
+      secret: '',
+      secure: false,
+      downloadDir: '',
+    });
+  });
+
+  it('fills undefined input with defaults', () => {
+    const result = parseAria2Config(undefined);
+    expect(result).toEqual({
+      enabled: false,
+      host: '127.0.0.1',
+      port: 6800,
+      secret: '',
+      secure: false,
+      downloadDir: '',
+    });
+  });
+
+  it('clamps port below minimum to default', () => {
+    const result = parseAria2Config({ port: -1 });
+    expect(result.port).toBe(6800);
+  });
+
+  it('clamps port above maximum to default', () => {
+    const result = parseAria2Config({ port: 99999 });
+    expect(result.port).toBe(6800);
+  });
+
+  it('strips extra fields', () => {
+    const result = parseAria2Config({ enabled: true, extra: 'field' });
+    expect(result).not.toHaveProperty('extra');
   });
 });
 
@@ -302,6 +377,10 @@ describe('parseDiagnosticEvents', () => {
     // Notification
     'notification_create_failed',
     'download_route_failed',
+    // Aria2
+    'aria2_download_added',
+    'aria2_unreachable',
+    'aria2_config_invalid',
   ] as const)('accepts diagnostic code: %s', (code) => {
     const input = [{ id: 'e1', ts: 1, level: 'info', code, message: 'test' }];
     const result = parseDiagnosticEvents(input);
@@ -321,6 +400,7 @@ describe('parseStorage', () => {
       minFileSize: 0,
       hideDownloadBar: false,
       autoLaunchApp: true,
+      target: 'motrix',
     });
     expect(result.siteRules).toEqual([]);
     expect(result.uiPrefs).toEqual({ theme: 'system', colorScheme: 'amber', locale: 'auto' });

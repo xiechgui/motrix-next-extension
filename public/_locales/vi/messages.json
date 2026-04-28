@@ -407,5 +407,173 @@
   "error_api_timeout": {
     "message": "Hết thời gian kết nối",
     "description": "Error when the API connection times out"
+  },
+  "options_section_aria2": {
+    "message": "Aria2 RPC",
+    "description": "Settings section for Aria2 RPC configuration"
+  },
+  "options_aria2_enabled_label": {
+    "message": "Enable Aria2 RPC",
+    "description": "Toggle label for enabling Aria2 RPC"
+  },
+  "options_aria2_host_label": {
+    "message": "Host",
+    "description": "Label for Aria2 host input"
+  },
+  "options_aria2_host_placeholder": {
+    "message": "127.0.0.1",
+    "description": "Placeholder for Aria2 host input"
+  },
+  "options_aria2_port_label": {
+    "message": "Port",
+    "description": "Label for Aria2 port input"
+  },
+  "options_aria2_secure_label": {
+    "message": "HTTPS",
+    "description": "Label for Aria2 HTTPS toggle"
+  },
+  "options_aria2_secret_label": {
+    "message": "Secret Token",
+    "description": "Label for Aria2 secret token input"
+  },
+  "options_aria2_secret_placeholder": {
+    "message": "RPC secret",
+    "description": "Placeholder for Aria2 secret input"
+  },
+  "options_aria2_dir_label": {
+    "message": "Download Directory",
+    "description": "Label for Aria2 download directory input"
+  },
+  "options_aria2_dir_placeholder": {
+    "message": "/downloads",
+    "description": "Placeholder for Aria2 download directory"
+  },
+  "options_test_aria2": {
+    "message": "Test Aria2 Connection",
+    "description": "Button to test Aria2 connection"
+  },
+  "options_download_target_label": {
+    "message": "Download Target",
+    "description": "Label for download target selection"
+  },
+  "options_download_target_desc": {
+    "message": "Choose where to send downloads",
+    "description": "Description for download target selection"
+  },
+  "options_target_motrix": {
+    "message": "Motrix Next",
+    "description": "Download target option: Motrix Next"
+  },
+  "options_target_aria2": {
+    "message": "Aria2 RPC",
+    "description": "Download target option: Aria2 RPC"
+  },
+  "confirm_download_title": {
+    "message": "Confirm Download",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_file": {
+    "message": "File",
+    "description": "Label for file name in confirmation popup"
+  },
+  "confirm_size": {
+    "message": "Size",
+    "description": "Label for file size in confirmation popup"
+  },
+  "confirm_unknown_size": {
+    "message": "Kích thước không xác định",
+    "description": "Shown when file size is not available"
+  },
+  "confirm_filename_label": {
+    "message": "Tên tệp",
+    "description": "Label for filename input field"
+  },
+  "confirm_dir_label": {
+    "message": "Thư mục tải xuống",
+    "description": "Label for download directory input field"
+  },
+  "confirm_dir_placeholder": {
+    "message": "Nhập thư mục tải xuống",
+    "description": "Placeholder for download directory input"
+  },
+  "confirm_proxy_label": {
+    "message": "Proxy",
+    "description": "Label for proxy input field"
+  },
+  "confirm_proxy_placeholder": {
+    "message": "Nhập địa chỉ proxy",
+    "description": "Placeholder for proxy input"
+  },
+  "confirm_cancel": {
+    "message": "Hủy",
+    "description": "Cancel button in confirmation popup"
+  },
+  "confirm_start": {
+    "message": "Start Download",
+    "description": "Start download button in confirmation popup"
+  },
+  "confirm_send_to_aria2": {
+    "message": "Send to Aria2",
+    "description": "Title of the download confirmation popup"
+  },
+  "confirm_aria2_rpc_label": {
+    "message": "aria2 rpc",
+    "description": "Label for aria2 rpc field"
+  },
+  "confirm_aria2_info_label": {
+    "message": "Trạng thái aria2",
+    "description": "Label for aria2 info field"
+  },
+  "confirm_size_label": {
+    "message": "Kích thước tệp",
+    "description": "Label for size field"
+  },
+  "confirm_confirm": {
+    "message": "Xác nhận",
+    "description": "Confirm button in confirmation popup"
+  },
+  "confirm_advance": {
+    "message": "Nâng cao",
+    "description": "Advanced options button"
+  },
+  "confirm_advanced": {
+    "message": "Tùy chọn nâng cao",
+    "description": "Advanced section title"
+  },
+  "confirm_checking": {
+    "message": "Đang kiểm tra...",
+    "description": "Shown while checking aria2 status"
+  },
+  "confirm_save_as_default": {
+    "message": "Lưu làm mặc định",
+    "description": "Checkbox to save current value as default for next time"
+  },
+  "confirm_connected": {
+    "message": "Đã kết nối",
+    "description": "Shown when aria2 is connected"
+  },
+  "confirm_disconnected": {
+    "message": "Chưa kết nối",
+    "description": "Shown when aria2 is disconnected"
+  },
+  "confirm_url_label": {
+    "message": "URL tải xuống",
+    "description": "Confirm popup: confirm_url_label"
+  },
+  "confirm_url_placeholder": {
+    "message": "Nhập URL tải xuống",
+    "description": "Confirm popup: confirm_url_placeholder"
+  },
+  "confirm_headers_label": {
+    "message": "Tiêu đề yêu cầu",
+    "description": "Confirm popup: confirm_headers_label"
+  },
+  "confirm_headers_placeholder": {
+    "message": "Một tiêu đề mỗi dòng, định dạng: Header-Name: value",
+    "description": "Confirm popup: confirm_headers_placeholder"
+  },
+  "confirm_window_title": {
+    "message": "Xác nhận tải xuống",
+    "description": "Title of the download confirmation popup window"
   }
 }

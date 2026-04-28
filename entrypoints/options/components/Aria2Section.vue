@@ -48,10 +48,7 @@ const errorMessage = computed(() => {
   <div class="section">
     <div class="section__row">
       <NFormItem :label="i18n('options_aria2_enabled_label', 'Enable Aria2 RPC')">
-        <NSwitch
-          :value="enabled"
-          @update:value="(v: boolean) => emit('update:enabled', v)"
-        />
+        <NSwitch :value="enabled" @update:value="(v: boolean) => emit('update:enabled', v)" />
       </NFormItem>
     </div>
 
@@ -75,10 +72,7 @@ const errorMessage = computed(() => {
           />
         </NFormItem>
         <NFormItem :label="i18n('options_aria2_secure_label', 'HTTPS')">
-          <NSwitch
-            :value="secure"
-            @update:value="(v: boolean) => emit('update:secure', v)"
-          />
+          <NSwitch :value="secure" @update:value="(v: boolean) => emit('update:secure', v)" />
         </NFormItem>
       </div>
 

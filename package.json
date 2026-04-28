@@ -20,7 +20,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:i18n": "npx tsx scripts/lint-i18n.ts",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "ci": "pnpm format && pnpm compile && pnpm test && pnpm build"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.4.0",

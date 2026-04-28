@@ -62,7 +62,7 @@ const MIGRATIONS: readonly Migration[] = [
     // between Motrix and Aria2 as download destination.
     version: 3,
     up: (data) => {
-      const newData = { ...data, _version: 3 };
+      const newData = { ...data, _version: 3 } as Record<string, unknown>;
       // Initialize aria2 config with defaults if not present
       if (!newData.aria2) {
         newData.aria2 = {

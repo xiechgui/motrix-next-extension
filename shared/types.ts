@@ -70,6 +70,18 @@ export interface Aria2Config {
 /** Download target type */
 export type DownloadTarget = 'motrix' | 'aria2';
 
+/** Parameters for Aria2 download confirmation popup */
+export interface Aria2DownloadParams {
+  requestId: string;
+  url: string;
+  filename?: string;
+  dir?: string;
+  proxy?: string;
+  referer?: string;
+  cookie?: string;
+  headers?: string;
+}
+
 // ─── Download Filter Types ──────────────────────────────
 
 export interface FilterContext {
@@ -124,6 +136,7 @@ export type DiagnosticCode =
   | 'aria2_unreachable'
   | 'aria2_auth_failed'
   | 'aria2_download_added'
+  | 'aria2_config_invalid'
   // ── Download interception lifecycle ───────────────────
   | 'download_intercepted'
   | 'download_skipped'

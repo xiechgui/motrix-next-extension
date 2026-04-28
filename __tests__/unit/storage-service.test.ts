@@ -57,7 +57,7 @@ describe('StorageService.load', () => {
     expect(result.settings.enabled).toBe(false);
     expect(result.settings.minFileSize).toBe(5);
     expect(migration.from).toBe(1);
-    expect(migration.to).toBe(2);
+    expect(migration.to).toBe(3);
     expect(migration.migrated).toBe(true);
   });
 
@@ -103,6 +103,7 @@ describe('StorageService.saveSettings', () => {
       minFileSize: 10,
       hideDownloadBar: true,
       autoLaunchApp: false,
+      target: 'motrix' as const,
     };
 
     await service.saveSettings(settings);

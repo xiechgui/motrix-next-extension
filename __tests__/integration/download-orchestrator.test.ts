@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DownloadOrchestrator } from '@/lib/download/orchestrator';
 import type { OrchestratorDeps } from '@/lib/download/orchestrator';
-import type { DownloadSettings, SiteRule } from '@/shared/types';
-import { DEFAULT_DOWNLOAD_SETTINGS } from '@/shared/constants';
+import type { DownloadSettings, SiteRule, Aria2Config } from '@/shared/types';
+import { DEFAULT_DOWNLOAD_SETTINGS, DEFAULT_ARIA2_CONFIG } from '@/shared/constants';
 
 // ─── Mock Types ─────────────────────────────────────────
 
@@ -49,6 +49,10 @@ function createMockDeps(overrides: Partial<OrchestratorDeps> = {}): Orchestrator
     openProtocolNewTask: vi
       .fn<(url: string, referer: string, cookie: string) => Promise<void>>()
       .mockResolvedValue(undefined),
+    aria2Client: undefined,
+    getAria2Config: vi.fn().mockReturnValue({
+      ...DEFAULT_ARIA2_CONFIG,
+    } satisfies Aria2Config),
     ...overrides,
   };
 }
